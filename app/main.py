@@ -527,21 +527,82 @@ class VoiceBoxApp:
                     tk.Label(c2, text="  Left  CTRL  +  Left  SHIFT   →   Analyze your screen", bg="#ffffff", fg="#0f172a", font=("Consolas", 10, "bold"), anchor="w").pack(fill="x", padx=12, pady=8)
                     tk.Label(c2, text="Hold both → screen captured → speak:  “What does this say?”  →  analysed + spoken", bg="#ffffff", fg="#64748b", font=("Segoe UI", 8)).pack(fill="x", padx=12, pady=(0,8))
                     tk.Label(content, text="Try it after the tour — the overlay appears at the middle-top, calm white, with thumbnail for screen.", bg="#ffffff", fg="#94a3b8", font=("Segoe UI", 8)).pack(anchor="w", pady=(10,0))
-                # Step 4 Permissions
+                # Step 4 Permissions — interactive (asks like a real installer)
                 elif idx == 4:
-                    tk.Label(content, text="Permissions — why each is needed", bg="#ffffff", fg="#0f172a", font=("Segoe UI", 14, "bold")).pack(anchor="w")
-                    tk.Label(content, text="We ask only once, and explain why. No hidden access.", bg="#ffffff", fg="#64748b", font=("Segoe UI", 9)).pack(anchor="w", pady=(4,12))
-                    items = [
-                        ("🎤  Microphone", "To hear your question after the hotkey. We listen only after you press Ctrl+Alt or Ctrl+Shift."),
-                        ("🖥️  Screen capture", "Only when you press Ctrl+Shift, to let you ask about what you see. No continuous recording."),
-                        ("🔒  Administrator (once)", "To register global hotkeys and allow background run. Windows shows ‘Allow changes?’ → click Yes once."),
-                        ("⚡  Background", "Stays in tray at 0.1% CPU, so it’s instant when you need it."),
-                    ]
-                    for title, desc in items:
+                    tk.Label(content, text="Permissions — we’ll ask, you choose", bg="#ffffff", fg="#0f172a", font=("Segoe UI", 14, "bold")).pack(anchor="w")
+                    tk.Label(content, text="Click Allow to grant. We only use each when you press the hotkey.", bg="#ffffff", fg="#64748b", font=("Segoe UI", 9)).pack(anchor="w", pady=(4,12))
+
+                    # Microphone row with Allow button
+                    def ask_mic():
+                        try:
+                            # This triggers Windows mic permission dialog on first use
+                            import speech_recognition as sr
+                            r = sr.Recognizer()
+                            with sr.Microphone() as source:
+                                r.adjust_for_ambient_noise(source, duration=0.5)
+                            status_mic.config(text="✓ Microphone: Allowed — we can hear you after Ctrl+Alt", bg="#ecfdf5", fg="#065f46")
+                            self.voice.speak_blocking("Microphone access granted!")
+                        except Exception as e:
+                            status_mic.config(text=f"✗ Microphone: {e}. Check Settings → Privacy → Microphone → Allow apps", bg="#fef2f2", fg="#991b1b")
+                            from tkinter import messagebox as mb
+                            mb.showinfo("Microphone", "VoiceBox wants to access your microphone — to hear your question after you press Left Ctrl + Left Alt.\n\nIf blocked, open Settings → Privacy & security → Microphone → Let apps access your microphone → On, then click Allow again.")
+
+                    def ask_screen():
+                        try:
+                            if self.screen_analyzer:
+                                # Trigger screen capture - Windows may ask for permission on first capture
+                                img = self.screen_analyzer.capture()
+                                status_screen.config(text="✓ Screen capture: Allowed — we can see your screen after Ctrl+Shift", bg="#ecfdf5", fg="#065f46")
+                                self.voice.speak_blocking("Screen capture access granted!")
+                                # Show thumbnail
+                                try:
+                                    from PIL import ImageTk
+                                    import io
+                                    thumb = img.copy()
+                                    thumb.thumbnail((320,180))
+                                    bio = io.BytesIO()
+                                    thumb.save(bio, format="PNG")
+                                    bio.seek(0)
+                                    from PIL import Image
+                                    tk_img = ImageTk.PhotoImage(thumb)
+                                    lbl = tk.Label(content, image=tk_img, bg="#ffffff", bd=1, relief="solid")
+                                    lbl.image = tk_img
+                                    lbl.pack(pady=6)
+                                except: pass
+                            else:
+                                status_screen.config(text="Screen analyzer not available (install mss)", bg="#fffbeb", fg="#92400e")
+                        except Exception as e:
+                            status_screen.config(text=f"✗ Screen: {e}", bg="#fef2f2", fg="#991b1b")
+                            from tkinter import messagebox as mb
+                            mb.showinfo("Screen capture", "VoiceBox wants to capture your screen — only when you press Left Ctrl + Left Shift to ask about what you see.\n\nIf blocked, allow screen capture in Windows Settings.")
+
+                    # Mic card
+                    f1 = tk.Frame(content, bg="#f8fafc", bd=1, relief="solid", highlightbackground="#e2e8f0")
+                    f1.pack(fill="x", pady=4)
+                    r1 = tk.Frame(f1, bg="#f8fafc")
+                    r1.pack(fill="x", padx=10, pady=6)
+                    tk.Label(r1, text="🎤  Microphone", bg="#f8fafc", fg="#0f172a", font=("Segoe UI", 9, "bold")).pack(side="left")
+                    tk.Button(r1, text="Allow Microphone", bg="#0f172a", fg="white", bd=0, padx=10, pady=4, font=("Segoe UI", 8, "bold"), command=lambda: threading.Thread(target=ask_mic, daemon=True).start()).pack(side="right")
+                    status_mic = tk.Label(f1, text="Not yet requested — click Allow to let VoiceBox listen after the hotkey", bg="#f8fafc", fg="#64748b", font=("Segoe UI", 8), wraplength=500, justify="left")
+                    status_mic.pack(anchor="w", padx=10, pady=(0,6))
+
+                    # Screen card
+                    f2 = tk.Frame(content, bg="#f8fafc", bd=1, relief="solid", highlightbackground="#e2e8f0")
+                    f2.pack(fill="x", pady=4)
+                    r2 = tk.Frame(f2, bg="#f8fafc")
+                    r2.pack(fill="x", padx=10, pady=6)
+                    tk.Label(r2, text="🖥️  Screen capture", bg="#f8fafc", fg="#0f172a", font=("Segoe UI", 9, "bold")).pack(side="left")
+                    tk.Button(r2, text="Allow Screen Capture", bg="#0f172a", fg="white", bd=0, padx=10, pady=4, font=("Segoe UI", 8, "bold"), command=lambda: threading.Thread(target=ask_screen, daemon=True).start()).pack(side="right")
+                    status_screen = tk.Label(f2, text="Not yet requested — click Allow, we capture only when you press Ctrl+Shift", bg="#f8fafc", fg="#64748b", font=("Segoe UI", 8), wraplength=500, justify="left")
+                    status_screen.pack(anchor="w", padx=10, pady=(0,6))
+
+                    # Admin / background info (no button needed, already granted via UAC)
+                    for title, desc in [("🔒  Administrator","Already granted via ‘Allow changes?’ when you ran the installer — needed once for hotkeys/background."),("⚡  Background","Stays in tray at 0.1% CPU, instant when you need it.")]:
                         f = tk.Frame(content, bg="#f8fafc", bd=1, relief="solid", highlightbackground="#e2e8f0")
                         f.pack(fill="x", pady=4)
                         tk.Label(f, text=title, bg="#f8fafc", fg="#0f172a", font=("Segoe UI", 9, "bold")).pack(anchor="w", padx=10, pady=(6,0))
                         tk.Label(f, text=desc, bg="#f8fafc", fg="#64748b", font=("Segoe UI", 8), wraplength=520, justify="left").pack(anchor="w", padx=10, pady=(2,6))
+                    tk.Label(content, text="Tip: you can change these anytime in Windows Settings → Privacy & security.", bg="#ffffff", fg="#94a3b8", font=("Segoe UI", 7)).pack(anchor="w", pady=(6,0))
                 # Step 5 AI Free
                 elif idx == 5:
                     tk.Label(content, text="AI — free forever, yours to make", bg="#ffffff", fg="#0f172a", font=("Segoe UI", 14, "bold")).pack(anchor="w")
