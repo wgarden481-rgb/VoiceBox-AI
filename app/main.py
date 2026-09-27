@@ -68,6 +68,24 @@ class VoiceBoxApp:
         self.setup_tray()
         self.setup_hotkey()
 
+        # Internet required for AI to work
+        try:
+            import requests
+            requests.get("https://8.8.8.8", timeout=3)
+        except:
+            try:
+                requests.get("https://www.google.com", timeout=3)
+            except:
+                print("[Net] No internet - AI will require internet to answer")
+                # Show overlay warning after a moment
+                def warn_no_net():
+                    if self.overlay:
+                        self.overlay.show_error("Internet required", "🌐 VoiceBox needs internet for AI to work (Groq Llama, Wikipedia, neural voices). Please connect to the internet.")
+                    try:
+                        self.voice.speak("Internet required for AI to work. Please connect to the internet.")
+                    except: pass
+                threading.Timer(2.0, warn_no_net).start()
+
         if not self.config.get("intro_completed", False):
             print("[Intro] First run detected - showing intro wizard...")
             threading.Timer(0.8, self.show_intro_wizard).start()
@@ -607,7 +625,7 @@ class VoiceBoxApp:
                 elif idx == 5:
                     tk.Label(content, text="AI — free forever, yours to make", bg="#ffffff", fg="#0f172a", font=("Segoe UI", 14, "bold")).pack(anchor="w")
                     tk.Label(content, text="No subscription. Works even offline.", bg="#ffffff", fg="#64748b", font=("Segoe UI", 9)).pack(anchor="w", pady=(4,12))
-                    tk.Label(content, text="1) Best quality (free): Groq Llama 3.1 — get a free key at console.groq.com (30 sec) and paste below.\n2) Fully offline: install Ollama → ‘ollama run llama3.1’ → unlimited, private.\n3) No key needed: Wikipedia + DuckDuckGo + offline writer that can write essays/stories like AI.", bg="#f8fafc", fg="#334155", font=("Segoe UI", 8), justify="left", padx=10, pady=8).pack(fill="x", pady=6)
+                    tk.Label(content, text="🌐 Internet required for AI to work.\n1) Best quality (free, needs internet): Groq Llama 3.1 — get a free key at console.groq.com (30 sec) and paste below.\n2) Fully offline fallback: install Ollama → ‘ollama run llama3.1’ (still needs internet for model download, then works offline).\n3) No key, needs internet: Wikipedia + DuckDuckGo for factual answers.", bg="#f8fafc", fg="#334155", font=("Segoe UI", 8), justify="left", padx=10, pady=8).pack(fill="x", pady=6)
                     row = tk.Frame(content, bg="#ffffff")
                     row.pack(fill="x", pady=8)
                     tk.Label(row, text="Groq API key (optional):", bg="#ffffff", fg="#0f172a", font=("Segoe UI", 9, "bold")).pack(side="left")

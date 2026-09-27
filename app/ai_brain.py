@@ -42,10 +42,25 @@ class AIBrain:
         except:
             return {}
 
+    def _has_internet(self, timeout=3):
+        try:
+            requests.get("https://8.8.8.8", timeout=timeout)
+            return True
+        except:
+            try:
+                requests.get("https://www.google.com", timeout=timeout)
+                return True
+            except:
+                return False
+
     def ask(self, question, language="en-US"):
         question = question.strip()
         if not question:
             return "I didn't catch that. Please try again."
+
+        # Requires internet for AI to work (Groq, Wikipedia, Edge TTS all need net)
+        if not self._has_internet():
+            return "🌐 Internet required: VoiceBox needs internet for AI to work (Groq Llama, Wikipedia, and neural voices). Please connect to the internet and try again."
 
         # Detect intent: is this a writing task? -> needs generative, not just Wikipedia
         is_writing = self._is_writing_task(question)
