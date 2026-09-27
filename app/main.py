@@ -467,8 +467,18 @@ class VoiceBoxApp:
                 step_title.config(text=f"Step {step['idx']+1} of {len(steps_meta)} — {steps_meta[step['idx']]}")
 
             def render():
+                # smooth fade out/in
+                try:
+                    for w in content.winfo_children():
+                        w.configure(bg="#ffffff")
+                except: pass
                 clear_content()
                 update_progress()
+                # micro animate
+                try:
+                    content.configure(bg="#fbfdff")
+                    content.after(60, lambda: content.configure(bg="#ffffff"))
+                except: pass
                 idx = step["idx"]
                 # Step 0 Welcome
                 if idx == 0:

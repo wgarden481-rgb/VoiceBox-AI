@@ -168,13 +168,13 @@ class Overlay:
         self.root.attributes("-topmost", True)
         self.is_visible = True
         def fade(step=0):
-            alpha = min(0.98, step * 0.14)
+            alpha = min(0.98, step * 0.12)
             try:
                 self.root.attributes("-alpha", alpha)
             except:
                 pass
             if alpha < 0.97:
-                self.root.after(18, lambda: fade(step+1))
+                self.root.after(16, lambda: fade(step+1))
         fade(1)
 
     def hide(self):
