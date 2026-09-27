@@ -326,10 +326,11 @@ async function downloadApp(e){
     const blob = await res.blob();
     bar.style.width='88%';
     const url = URL.createObjectURL(blob);
-    const a=document.createElement('a'); a.href=url; a.download='VoiceBox-Setup.zip';
+    const dlName = tryExe ? exeName : zipName;
+    const a=document.createElement('a'); a.href=url; a.download=dlName;
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     bar.style.width='100%';
-    toast('✓ Download ready — VoiceBox-Setup.zip. Check Downloads. The app will show the step-by-step tour on first open.');
+    toast('✓ Download ready — '+dlName+'. Check Downloads. Double-click it and click Yes on “Allow changes?” — it auto-installs.');
     document.getElementById('installGuide').style.display='block';
     document.getElementById('installGuide').scrollIntoView({behavior:'smooth', block:'nearest'});
     setTimeout(()=>{ progressEl.style.display='none'; bar.style.width='0%'; }, 1200);
