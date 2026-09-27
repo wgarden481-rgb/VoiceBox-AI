@@ -133,7 +133,7 @@ a{color:inherit;text-decoration:none}
       <h1>Your PC voice assistant.<br><em>Press and ask.</em></h1>
       <p class="lead">VoiceBox runs quietly in the background. It understands your voice, answers out loud, and can even look at your screen when you need it — all without subscription.</p>
       <div class="hero-actions">
-        <button class="btn btn-dark shimmer" onclick="downloadApp(event)">Download for Windows</button>
+        <a class="btn btn-dark shimmer" href="./VoiceBox-Full-Portable.zip" download>⬇ Download for Windows — Full (79MB)</a>
         <button class="btn" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">How it works</button>
         <a class="btn" href="./demo.html" style="text-decoration:none">🧪 Test live demo</a>
       </div>
@@ -178,7 +178,7 @@ a{color:inherit;text-decoration:none}
       <div class="card">
         <div class="icon">⬇</div>
         <h3>1 — Download & run once</h3>
-        <p>Download <span class="inline-code">VoiceBox-Setup.exe</span> (like Claude) and double-click. Instantly it extracts and asks <strong>Microphone?</strong>, <strong>Screen?</strong>, <strong>Background?</strong> — click Allow/Yes, it installs to %LOCALAPPDATA%\VoiceBox and opens the 8-step tour.<br><span style="display:inline-block;margin-top:6px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;padding:6px 8px;border-radius:8px;font-size:11px">⚠️ New apps show “Not commonly downloaded” / “Windows protected your PC” — this is normal for new unsigned apps. Click <strong>Keep</strong> in Chrome, then <strong>More info → Run anyway</strong> on the blue screen. The exe is open-source, embeds the app (no downloader), and has version info (VoiceBox AI 3.3). After a few downloads SmartScreen trusts it.</span></p>
+        <p>Download <span class="inline-code">VoiceBox-Full-Portable.zip</span> (79MB, portable Python included) and extract anywhere (e.g., Desktop). Double-click <span class="inline-code">Install.bat</span> → UAC Yes → it installs from local <span class="inline-code">wheels/</span> (no internet needed), asks <strong>Microphone?</strong>, <strong>Screen?</strong>, <strong>Background?</strong> — click Allow/Yes, it installs to %LOCALAPPDATA%\VoiceBox and opens the 8-step tour.<br><span style="display:inline-block;margin-top:6px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;padding:6px 8px;border-radius:8px;font-size:11px">⚠️ New apps show “Not commonly downloaded” / “Windows protected your PC” — this is normal for new unsigned apps. Click <strong>Keep</strong> in Chrome, then <strong>More info → Run anyway</strong> on the blue screen. The exe is open-source, embeds the app (no downloader), and has version info (VoiceBox AI 3.3). After a few downloads SmartScreen trusts it.</span></p>
       </div>
       <div class="card">
         <div class="icon">◎</div>
@@ -222,10 +222,10 @@ a{color:inherit;text-decoration:none}
     <div class="download">
       <div>
         <h3>Download VoiceBox</h3>
-        <p>Windows 10 / 11 • Python 3.10+ • ~35 KB • Free • Step-by-step tour inside the app</p>
+        <p>Windows 10 / 11 • <strong>No Python needed</strong> (portable 3.11 included) • 79MB Full • Wheels offline • Free • Tour inside</p>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-dark shimmer" onclick="downloadApp(event)">⬇ Download for Windows — 1 click (.exe)</button>
+        <a class="btn btn-dark shimmer" href="./VoiceBox-Full-Portable.zip" download>⬇ Download Full — 79MB (Recommended)</a> <a class="btn" href="./VoiceBox-Setup.exe" download>⬇ .exe (76KB)</a>
         <button class="btn" onclick="toggleInstall()">Install guide</button>
       </div>
     </div>
@@ -234,11 +234,12 @@ a{color:inherit;text-decoration:none}
     <div style="font-weight:700;margin-bottom:6px">If download doesn’t start in preview:</div>
     <a id="directZipLink" href="#" download="VoiceBox-Setup.zip" style="display:inline-flex;align-items:center;gap:6px;background:#ffffff;color:#0f172a;border:1px solid #e2e8f0;padding:8px 12px;border-radius:8px;font-weight:600;text-decoration:none;font-size:12px">⬇ Download as ZIP (manual)</a> &nbsp; <a id="directDataLink" href="#" download="VoiceBox-Setup.exe" style="display:inline-flex;align-items:center;gap:6px;background:#0f172a;color:#fff;padding:8px 12px;border-radius:8px;font-weight:700;text-decoration:none;font-size:12px">⬇ Download via embedded installer (always works)</a>
     <span style="margin:0 6px;color:#94a3b8">or</span>
-    <span>download directly from workspace file list → <code>VoiceBox-Setup.zip</code> → click ⬇ arrow on the right</span>
+    <span>big portable: <code>VoiceBox-Full-Portable.zip</code> (79MB) → small: <code>VoiceBox-Setup.zip</code> → <code>VoiceBox-Setup.exe</code> on the right</span>
     <div style="margin-top:6px;color:#64748b">Live preview: <code>VoiceBox-Setup.exe</code> (one-click) next to <code>index.html</code> — or <code>VoiceBox-Setup.zip</code> manual</div>
   </div>
 
-<div id="installGuide" class="steps" style="display:none;margin-top:12px">
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;color:#065f46;padding:10px 12px;border-radius:10px;font-size:12.5px;margin-top:10px"><strong>✅ Fully working, bigger file:</strong> The 79MB download includes portable Python 3.11 + all wheels (PyAudio, pygame, etc.), so it works after download even without Python installed or internet for pip. The old 35KB zip needed you to have Python + internet. This one just works — double-click <code>Install.bat</code>.</div>
+  <div id="installGuide" class="steps" style="display:none;margin-top:12px">
       <h3 style="font-size:14px;margin-bottom:8px;letter-spacing:-.01em">What you’ll see inside the app (step-by-step tour)</h3>
       <ol>
         <li><strong>Welcome</strong> — what VoiceBox does</li>
